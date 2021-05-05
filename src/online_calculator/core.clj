@@ -26,27 +26,25 @@ ADDITION = <SPACES?> (ADDITION | NUMBER | PARENTHESIS | MULTIPLICATION) (#'\\+|-
      (prn error#)
      (do ~@exprs)))
 
+(defn- solve-op [[a op b]]
+  (let [a (solve* a)
+        b (solve* b)]
+    (wrap-error [a b]
+                (case op
+                  "+" (+ a b)
+                  "-" (- a b)
+                  "*" (* a b)
+                  "/" (if (zero? b)
+                        {:error "division by zero"}
+                        (/ a b))))))
+
 (defn- solve* [[type & rest]]
   (case type
     :INTEGER (let [value (first rest)]
                (Integer/parseInt value))
-    :ADDITION (let [[a op b] rest
-                    a (solve* a)
-                    b (solve* b)]
-                (wrap-error [a b]
-                            (case op
-                              "+" (+ a b)
-                              "-" (- a b))))
-    :PARENTHESIS (solve* (first rest))
-    :MULTIPLICATION (let [[a op b] rest
-                          a (solve* a)
-                          b (solve* b)]
-                      (wrap-error [a b])
-                      (case op
-                        "*" (* a b)
-                        "/" (if (zero? b)
-                              {:error "division by zero"}
-                              (/ a b))))))
+    :ADDITION (solve-op rest)
+    :MULTIPLICATION (solve-op rest)
+    :PARENTHESIS (solve* (first rest))))
 
 (defn solve [tree]
   (if (insta/failure? tree)
