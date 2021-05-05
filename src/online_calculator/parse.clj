@@ -4,7 +4,6 @@
 (def parse
   (insta/parser
    "
-
 <EXP> = <SPACES?> ((ADDITION / MULTIPLICATION) | PARENTHESIS | NUMBER) <SPACES?>
 
 SPACES = #'\\s'*
@@ -14,11 +13,7 @@ PARENTHESIS = <SPACES?> <'('> EXP <')'> <SPACES?>
 
 MULTIPLICATION = <SPACES?> (MULTIPLICATION | NUMBER | PARENTHESIS) ('*'|'/') (NUMBER | PARENTHESIS) <SPACES?>
 ADDITION = <SPACES?> (ADDITION | NUMBER | PARENTHESIS | MULTIPLICATION) (#'\\+|-') (NUMBER | PARENTHESIS |  MULTIPLICATION ) <SPACES?>
-
-
-"
-   ;; :output-format :enlive
-   ))
+"))
 
 (defmacro wrap-error [results & exprs]
   `(if-let [error# (first (filter map? ~results))]
