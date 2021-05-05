@@ -23,8 +23,6 @@ system environment variable `PORT`.
 
 Make a test call to the url `http://localhost:7777/calculus?query=MiAqICgyMy8oMyozKSktIDIzICogKDIqMyk` and it should return a json response `{"error":false,"result":-132.8888888888889}`.
 
-###
-
 ## License
 
 Copyright © 2021 Ripley Flammer
