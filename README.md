@@ -15,7 +15,8 @@ It will return three possible responses:
 ### Starting the web-app
 
 Either run `lein run` in the project or repl via `lein repl` and execute `(start!)` in
-the `online-calculator.core` namespace in order to start the server.
+the `online-calculator.core` namespace in order to start the server. Alternatively build
+a jar file via `lein uberjar` and run it via `java - jar <path to jar>`.
 
 The default port `7777`. It can be passed as via repl as an argument like `(start! 1234)`
 or as the first argument via java command-line `java -jar <path to jar> 1234` or via the
