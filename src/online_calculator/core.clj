@@ -21,6 +21,10 @@ ADDITION = <SPACES?> (ADDITION | NUMBER | PARENTHESIS | MULTIPLICATION) (#'\\+|-
    ;; :output-format :enlive
    ))
 
+(defmacro wrap-error [results & exprs]
+  `(if-let [error# (first (filter map? ~results))]
+     (prn error#)
+     (do ~@exprs)))
 
 (defn- solve* [[type & rest]]
   (case type
@@ -29,16 +33,22 @@ ADDITION = <SPACES?> (ADDITION | NUMBER | PARENTHESIS | MULTIPLICATION) (#'\\+|-
     :ADDITION (let [[a op b] rest
                     a (solve* a)
                     b (solve* b)]
-                (case op
-                  "+" (+ a b)
-                  "-" (- a b)))
+                (wrap-error [a b]
+                            (case op
+                              "+" (+ a b)
+                              "-" (- a b))))
     :PARENTHESIS (solve* (first rest))
     :MULTIPLICATION (let [[a op b] rest
                           a (solve* a)
                           b (solve* b)]
+                      (wrap-error [a b])
                       (case op
                         "*" (* a b)
-                        "/" (/ a b)))))
+                        "/" (if (zero? b)
+                              {:error "division by zero"}
+                              (/ a b))))))
 
 (defn solve [tree]
-  (solve* (first tree)))
+  (if (insta/failure? tree)
+    {:error "invalid expression"}
+    (solve* (first tree))))

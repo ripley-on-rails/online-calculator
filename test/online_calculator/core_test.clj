@@ -7,6 +7,14 @@
 
 ;; test ()
 
+(deftest invalid-query-tests
+  (testing "Invalid queries"
+    (is (= {:error "invalid expression"} (solve (parse "1 2"))))
+    (is (= {:error "invalid expression"} (solve (parse "1 + + 2")))))
+  (testing "division by zero"
+    (is (= {:error "division by zero"} (solve (parse "1/0"))))
+    (is (= {:error "division by zero"} (solve (parse "1/(2-2)"))))))
+
 (deftest regression-tests
   (testing "Regressions"
     (is (= -347 (solve (parse "(3 / 1 * 2) + ( -123 - -1 * 2)*3 +  10 / 1"))))
