@@ -1,6 +1,6 @@
-(ns online-calculator.core-test
+(ns online-calculator.parse-test
   (:require [clojure.test :refer :all]
-            [online-calculator.core :refer :all]
+            [online-calculator.parse :refer :all]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [clojure.test.check :as tc]))
@@ -16,6 +16,9 @@
     (is (= {:error "division by zero"} (solve (parse "1/(2-2)"))))))
 
 (deftest regression-tests
+  (testing "queries"
+    (is (= -17411/33 #_ (- (* 2 (/ 23 33)) (* 23 23))
+           (solve (parse "2 * (23/(33))- 23 * (23)")))))
   (testing "Regressions"
     (is (= -347 (solve (parse "(3 / 1 * 2) + ( -123 - -1 * 2)*3 +  10 / 1"))))
     (is (= -121 (solve (parse "( -123 - -1 * 2)"))))

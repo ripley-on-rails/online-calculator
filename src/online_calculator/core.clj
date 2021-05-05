@@ -1,52 +1,56 @@
 (ns online-calculator.core
-  (:require [instaparse.core :as insta]))
+  (:require [compojure.core :refer :all]
+            [compojure.route :as route]
+            [ring.adapter.jetty :as jetty]
+            [ring.util.response :as resp]
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [online-calculator.parse :refer [parse solve]]
+            [clojure.data.json :as json])
+  (:import java.util.Base64)
+  (:gen-class))
 
+(defn decode [s]
+  (String. (.decode (Base64/getDecoder) s)))
 
-(def parse
-  (insta/parser
-   "
+(def missing-query-param
+  {:status 422
+   :headers {}
+   :body nil})
 
-<EXP> = <SPACES?> ((ADDITION / MULTIPLICATION) | PARENTHESIS | NUMBER) <SPACES?>
+(defn result-response [query]
+  (let [result (solve (parse query))
+        error (and (map? result) (:error result))]
+    {:status 200
+     :headers {"Content-Type" "application/json"}
+     :body (json/write-str (merge {:error (not (not error))}
+                                  (if error
+                                    {:message error}
+                                    {:result result})))}))
 
-SPACES = #'\\s'*
-<NUMBER> = <SPACES?> INTEGER <SPACES?>
-INTEGER = ((#'-*[1-9][0-9]*') | '0')
-PARENTHESIS = <SPACES?> <'('> EXP <')'> <SPACES?>
+(defn handler [{:keys [query-params] :as x}]
+  (let [query (query-params "query")]
+    (if query
+      (result-response (decode query))
+      missing-query-param)))
 
-MULTIPLICATION = <SPACES?> (MULTIPLICATION | NUMBER | PARENTHESIS) ('*'|'/') (NUMBER | PARENTHESIS) <SPACES?>
-ADDITION = <SPACES?> (ADDITION | NUMBER | PARENTHESIS | MULTIPLICATION) (#'\\+|-') (NUMBER | PARENTHESIS |  MULTIPLICATION ) <SPACES?>
+(defroutes app-routes
+  (GET "/calculus" [] handler)
+  (route/not-found "Not Found"))
 
+(def app (wrap-defaults app-routes site-defaults))
 
-"
-   ;; :output-format :enlive
-   ))
+(def server nil)
 
-(defmacro wrap-error [results & exprs]
-  `(if-let [error# (first (filter map? ~results))]
-     (prn error#)
-     (do ~@exprs)))
+(defn- start! [& [port]]
+  (let [port (Integer. (or port
+                           (System/getenv "PORT")
+                           7777))]
+    (def server (jetty/run-jetty #'app {:port  port
+                                        :join? false}))))
 
-(defn- solve-op [[a op b]]
-  (let [a (solve* a)
-        b (solve* b)]
-    (wrap-error [a b]
-                (case op
-                  "+" (+ a b)
-                  "-" (- a b)
-                  "*" (* a b)
-                  "/" (if (zero? b)
-                        {:error "division by zero"}
-                        (/ a b))))))
+(defn- stop! []
+  (.stop server))
 
-(defn- solve* [[type & rest]]
-  (case type
-    :INTEGER (let [value (first rest)]
-               (Integer/parseInt value))
-    :ADDITION (solve-op rest)
-    :MULTIPLICATION (solve-op rest)
-    :PARENTHESIS (solve* (first rest))))
-
-(defn solve [tree]
-  (if (insta/failure? tree)
-    {:error "invalid expression"}
-    (solve* (first tree))))
+(defn -main
+  [& [port]]
+  (start! port))
