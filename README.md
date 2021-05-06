@@ -7,7 +7,7 @@ and left-to-right evaluation in case of equal precendces of operators.
 
 It will return three possible responses:
 * `{"error":true,"message":"division by zero"}` in case there is a division by zero ...duh
-* `{"error":true,"message":"invalid base64"}` with status 422 in case the query string doesn't contain valid base64 code
+* `{"error":true,"message":"invalid base64"}` with status 422 in case of invalid base64 encoding
 * `{"error":true,"message":"missing query param"}` with status 422 in case the query string is missing
 * `{"error":true,"message":"invalid expression"}` if the expression could not be parsed
 * `{"error":false,"result":<result>}` in case of a successful evaluation
