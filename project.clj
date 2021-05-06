@@ -11,6 +11,8 @@
                  [ring/ring-jetty-adapter "1.9.2"]
                  [ring/ring-defaults "0.3.2"]
                  [compojure "1.6.2"]]
+  :uberjar-name "online-calculator-standalone.jar"
+  :min-lein-version "2.9.6"
   :main online-calculator.core
   :profiles {:uberjar {:aot :all}}
   :repl-options {:init-ns online-calculator.core})

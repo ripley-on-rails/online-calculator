@@ -44,7 +44,7 @@
 (defn- start! [& [port]]
   (let [port (Integer. (or port
                            (System/getenv "PORT")
-                           7777))]
+                           8080))]
     (def server (jetty/run-jetty #'app {:port  port
                                         :join? false}))))
 
