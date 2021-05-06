@@ -12,10 +12,11 @@
 (defn decode [s]
   (String. (.decode (Base64/getDecoder) s)))
 
-(def missing-query-param
+(defn response-422 [message]
   {:status 422
-   :headers {}
-   :body nil})
+   :headers {"Content-Type" "application/json"}
+   :body (json/write-str {:error true
+                          :message message})})
 
 (defn result-response [query]
   (let [result (solve (parse query))
@@ -28,10 +29,14 @@
                                     {:result result})))}))
 
 (defn handler [{:keys [query-params] :as x}]
-  (let [query (query-params "query")]
+  (let [query (query-params "query")
+        [valid? decoded-query] (try [true (decode query)]
+                                    (catch Exception e [false nil]))]
     (if query
-      (result-response (decode query))
-      missing-query-param)))
+      (if valid?
+        (result-response decoded-query)
+        (response-422 "invalid base64"))
+      (response-422 "missing query param"))))
 
 (defroutes app-routes
   (GET "/calculus" [] handler)
