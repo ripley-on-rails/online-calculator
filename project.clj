@@ -11,6 +11,14 @@
                  [ring/ring-jetty-adapter "1.9.2"]
                  [ring/ring-defaults "0.3.2"]
                  [compojure "1.6.2"]]
+  :plugins [[lein-heroku "0.5.3"]]
+  :heroku {
+           :app-name "ripleys-online-calculator"
+           :jdk-version "1.15"
+           ;;:include-files ["target/myapp.jar"]
+           :process-types { "web" "java -jar target/online-calculator-standalone.jar" }}
+  :uberjar-name "online-calculator-standalone.jar"
+  :min-lein-version "2.9.6"
   :main online-calculator.core
   :profiles {:uberjar {:aot :all}}
   :repl-options {:init-ns online-calculator.core})

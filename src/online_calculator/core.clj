@@ -6,11 +6,11 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [online-calculator.parse :refer [parse solve]]
             [clojure.data.json :as json])
-  (:import java.util.Base64)
+  #_(:import java.util.Base64)
   (:gen-class))
 
 (defn decode [s]
-  (String. (.decode (Base64/getDecoder) s)))
+  s #_(String. (.decode (Base64/getDecoder) s)))
 
 (def missing-query-param
   {:status 422
