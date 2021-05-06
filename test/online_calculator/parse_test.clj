@@ -10,21 +10,23 @@
 
 (deftest invalid-query-tests
   (testing "Invalid queries"
-    (is (= {:error "invalid expression"} (solve (parse "1 2"))))
-    (is (= {:error "invalid expression"} (solve (parse "1 + + 2")))))
+    (are [expected expression] (= expected (solve (parse expression)))
+      {:error "invalid expression"} "1 2"
+      {:error "invalid expression"} "1 + + 2"))
   (testing "division by zero"
-    (is (= {:error "division by zero"} (solve (parse "1/0"))))
-    (is (= {:error "division by zero"} (solve (parse "1/(2-2)"))))))
-
-(deftest regression-tests
+    (are [expected expression] (= expected (solve (parse expression)))
+      {:error "division by zero"} "1/0"
+      {:error "division by zero"} "1/(2-2)"))
   (testing "queries"
-    (is (= -17411/33 #_ (- (* 2 (/ 23 33)) (* 23 23))
-           (solve (parse "2 * (23/(33))- 23 * (23)")))))
+    (are [expected expression] (= expected (solve (parse expression)))
+      -17411/33  "2 * (23/(33))- 23 * (23)"
+      -1196/9    "2 * (23/(3*3))- 23 * (2*3)"))
   (testing "Regressions"
-    (is (= -347 (solve (parse "(3 / 1 * 2) + ( -123 - -1 * 2)*3 +  10 / 1"))))
-    (is (= -121 (solve (parse "( -123 - -1 * 2)"))))
-    (is (= -1 (solve (parse "0+0- 0+-1"))))
-    (is (= -13 (solve (parse "(-1)+54-                    65                        +-1"))))))
+    (are [expected expression] (= expected (solve (parse expression)))
+      -347 "(3 / 1 * 2) + ( -123 - -1 * 2)*3 +  10 / 1"
+      -121 "( -123 - -1 * 2)"
+      -1   "0+0- 0+-1"
+      -13  "(-1)+54-                    65                        +-1")))
 
 (def whitespaces
   (gen/bind gen/small-integer
