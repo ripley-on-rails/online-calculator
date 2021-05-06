@@ -32,8 +32,11 @@ The web service is currently deployed to Heroku. A test call can be made to
 To deploy obtain and setup the project:
 
 > heroku login
+>
 > git clone https://github.com/phalphalak/online-calculator.git
+>
 > cd online-calculator
+>
 > heroku create
 
 This will give you something like `sheltered-harbor-57189` for instance
