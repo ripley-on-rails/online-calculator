@@ -18,11 +18,31 @@ Either run `lein run` in the project or repl via `lein repl` and execute `(start
 the `online-calculator.core` namespace in order to start the server. Alternatively build
 a jar file via `lein uberjar` and run it via `java - jar <path to jar>`.
 
-The default port `7777`. It can be passed as via repl as an argument like `(start! 1234)`
+The default port `8080`. It can be passed as via repl as an argument like `(start! 1234)`
 or as the first argument via java command-line `java -jar <path to jar> 1234` or via the
 system environment variable `PORT`.
 
-Make a test call to the url `http://localhost:7777/calculus?query=MiAqICgyMy8oMyozKSktIDIzICogKDIqMyk` and it should return a json response `{"error":false,"result":-132.8888888888889}`.
+Make a test call to the url `http://localhost:8080/calculus?query=MiAqICgyMy8oMyozKSktIDIzICogKDIqMyk` and it should return a json response `{"error":false,"result":-132.8888888888889}`.
+
+## Deployment
+
+The web service is currently deployed to Heroku. A test call can be made to
+`https://ripleys-online-calculator.herokuapp.com/calculus?query=MiAqICgyMy8oMyozKSktIDIzICogKDIqMyk`.
+
+To deploy obtain and setup the project:
+
+> heroku login
+> git clone https://github.com/phalphalak/online-calculator.git
+> cd online-calculator
+> heroku create
+
+This will give you something like `sheltered-harbor-57189` for instance
+
+In order to deploy:
+
+> git push heroku master
+
+Now the service should be accessible via `https://sheltered-harbor-57189.herokuapp.com/calculus?query=MiAqICgyMy8oMyozKSktIDIzICogKDIqMyk` in our example.
 
 ## License
 
