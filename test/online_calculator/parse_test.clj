@@ -3,6 +3,7 @@
             [online-calculator.parse :refer :all]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
+            [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check :as tc]))
 
 ;; test ()
@@ -79,7 +80,8 @@
 
 (defn- error [v]
   (and (map? v)
-       (v :error)))
+       (v :error)
+       v))
 
 (defn op->query [op [a b]]
   (let [[s1 v1] (tree->query a)
@@ -114,11 +116,10 @@
     :* (op->query op rest)
     :/ (op->query op rest)))
 
-(def test-solve-and-parse
+(defspec test-solve-and-parse 100
   (prop/for-all [exp expression-rec]
                 (let [[query expected] (tree->query exp)]
-                  ;;(prn [query expected])
                   (= expected
                      (solve (parse query))))))
 
-(tc/quick-check 100 test-solve-and-parse)
+;;(tc/quick-check 100 test-solve-and-parse)
