@@ -121,4 +121,4 @@
                   (= expected
                      (solve (parse query))))))
 
-;;(tc/quick-check 100 test-solve-and-parse)
+(tc/quick-check 100 test-solve-and-parse)

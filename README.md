@@ -47,6 +47,14 @@ In order to deploy:
 
 Now the service should be accessible via `https://sheltered-harbor-57189.herokuapp.com/calculus?query=MiAqICgyMy8oMyozKSktIDIzICogKDIqMyk` in our example.
 
+## Side-note
+
+The project makes extensive use of `test check` which is inspired by QuickCheck.
+The randomized tests generate tree structures from the bottom up which are flattened to its
+string representation including random leading and trailing whitespaces and the expected value.
+The string is passed on to the parser and solver and its result is being compared to the
+expected value. This is to make extra sure that the tricky parser is tested thoroughly.
+
 ## License
 
 Copyright © 2021 Ripley Flammer
